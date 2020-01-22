@@ -1,0 +1,25 @@
+{
+  "name": "node-orm",
+  "version": "1.0.0",
+  "description": "Lightweight ORM for Node.js with TypeScript decorators",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "example": "ts-node examples/basic.ts",
+    "clean": "rm -rf dist"
+  },
+  "keywords": ["orm", "typescript", "decorators", "sql", "database", "query-builder"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^4.5.4",
+    "ts-node": "^10.4.0",
+    "reflect-metadata": "^0.1.13",
+    "@types/node": "^16.11.12"
+  },
+  "peerDependencies": {
+    "reflect-metadata": "^0.1.13"
+  }
+}
