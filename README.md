@@ -206,3 +206,9 @@ await Connection.transaction(async (tx) => {
 ## License
 
 MIT
+
+## Roadmap
+
+- [ ] Connection pooling
+- [ ] Eager loading
+- [ ] Soft deletes
