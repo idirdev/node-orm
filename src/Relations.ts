@@ -49,7 +49,7 @@ export class RelationBuilder {
         return new QueryBuilder(rel.target).where('id', '=', id);
       case 'manyToMany':
         return new QueryBuilder(rel.pivotTable!)
-          .join(rel.target, `${rel.pivotTable}.${rel.localKey}`, '=', `${rel.target}.id`)
+          .join(rel.target, `${rel.pivotTable}.${rel.localKey}`, `${rel.target}.id`)
           .where(`${rel.pivotTable}.${rel.foreignKey}`, '=', id);
       default:
         return null;

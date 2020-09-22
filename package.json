@@ -8,15 +8,19 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "example": "ts-node examples/basic.ts",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "test": "vitest run"
   },
   "keywords": ["orm", "typescript", "decorators", "sql", "database", "query-builder"],
   "author": "",
   "license": "MIT",
+  "dependencies": {
+    "reflect-metadata": "^0.1.13"
+  },
   "devDependencies": {
     "typescript": "^4.5.4",
     "ts-node": "^10.4.0",
-    "reflect-metadata": "^0.1.13",
+    "vitest": "^2.0.0",
     "@types/node": "^16.11.12"
   },
   "peerDependencies": {
