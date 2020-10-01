@@ -212,3 +212,27 @@ MIT
 - [ ] Connection pooling
 - [ ] Eager loading
 - [ ] Soft deletes
+
+---
+
+## 🇫🇷 Documentation en français
+
+### Description
+node-orm est un ORM léger basé sur les décorateurs pour Node.js avec TypeScript, sans dépendances runtime. Il offre un query builder fluide, un système de migrations et un mapping objet-relationnel via des décorateurs TypeScript. Une alternative minimaliste aux ORM lourds pour les projets nécessitant contrôle et transparence.
+
+### Installation
+```bash
+npm install node-orm reflect-metadata
+```
+
+### Utilisation
+```typescript
+import { Entity, Column, PrimaryKey } from 'node-orm';
+
+@Entity('users')
+class User {
+  @PrimaryKey() id: number;
+  @Column() name: string;
+}
+```
+Consultez la documentation en anglais ci-dessus pour les décorateurs disponibles, le query builder et les migrations.
