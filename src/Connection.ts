@@ -2,6 +2,10 @@ import { ConnectionConfig, TransactionHandle } from './types';
 
 type ExecuteFn = (sql: string, params?: unknown[]) => Promise<unknown[]>;
 
+// Forward declaration — the actual implementation lives in src/drivers/sqlite.ts
+// and is imported lazily so that better-sqlite3 stays optional.
+type SQLiteDatabase = import('better-sqlite3').Database;
+
 export class Connection {
   private static config: ConnectionConfig | null = null;
   private static pool: Map<string, unknown> = new Map();
@@ -78,5 +82,22 @@ export class Connection {
 
   static getConfig(): ConnectionConfig | null {
     return this.config;
+  }
+
+  /**
+   * Convenience factory: open a SQLite database and register its executor in
+   * one call. Requires `better-sqlite3` to be installed.
+   *
+   * @param filePath  Path to the `.db` file, or `':memory:'` for an in-memory DB.
+   * @param logging   When true, every SQL statement is printed to stdout.
+   *
+   * @example
+   * ```typescript
+   * const db = await Connection.sqlite(':memory:');
+   * ```
+   */
+  static async sqlite(filePath: string, logging = false): Promise<SQLiteDatabase> {
+    const { createSQLiteConnection } = await import('./drivers/sqlite');
+    return createSQLiteConnection(filePath, logging);
   }
 }

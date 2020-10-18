@@ -26,7 +26,7 @@ describe('RelationBuilder', () => {
     const rb = new RelationBuilder();
     rb.hasMany('posts', 'posts', 'user_id');
     const q = rb.buildQuery('posts', 1);
-    expect(q?.toSQL()).toContain('posts');
+    expect(q?.toSQL().sql).toContain('posts');
   });
   it('returns null for unknown', () => {
     expect(new RelationBuilder().buildQuery('x', 1)).toBeNull();

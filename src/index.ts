@@ -18,3 +18,4 @@ export { Migration, MigrationRunner } from './Migration';
 export { Schema } from './Schema';
 export { RelationBuilder } from './Relations';
 export { required, minLength, maxLength, email, min, max, pattern, validate } from './validators';
+export { createSQLiteConnection } from './drivers/sqlite';

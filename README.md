@@ -31,7 +31,73 @@ Add to your `tsconfig.json`:
 }
 ```
 
-## Quick Start
+## Quick Start — SQLite (zero config)
+
+The easiest way to get started is with the built-in SQLite adapter. Install the
+optional peer dependency:
+
+```bash
+npm install better-sqlite3
+npm install --save-dev @types/better-sqlite3   # if using TypeScript
+```
+
+Then connect and use the ORM immediately — no server required:
+
+```typescript
+import 'reflect-metadata';
+import { Entity, Field, PrimaryKey, AutoIncrement, Model, Connection, Schema, FieldType } from 'node-orm';
+
+@Entity('users')
+class User extends Model {
+  @PrimaryKey
+  @AutoIncrement
+  @Field({ type: FieldType.INTEGER })
+  id!: number;
+
+  @Field({ type: FieldType.STRING })
+  name!: string;
+
+  @Field({ type: FieldType.STRING })
+  email!: string;
+}
+
+async function main() {
+  // Opens (or creates) users.db and wires up the SQLite executor automatically.
+  // Pass ':memory:' for a temporary in-memory database.
+  const db = await Connection.sqlite('./users.db');
+
+  // Create the table from the decorated model class.
+  db.exec(Schema.generateCreateSQL(User));
+
+  // Create
+  const user = await User.create({ name: 'Alice', email: 'alice@example.com' });
+  console.log(user.id); // auto-incremented id
+
+  // Read
+  const found = await User.find(user.id);
+  const all   = await User.findAll({ limit: 10 });
+
+  // Update
+  await User.update(user.id, { name: 'Alice Smith' });
+
+  // Delete
+  await User.delete(user.id);
+
+  await Connection.disconnect();
+}
+
+main();
+```
+
+Alternatively, use the named export directly:
+
+```typescript
+import { createSQLiteConnection } from 'node-orm';
+
+const db = await createSQLiteConnection('./myapp.db', /* logging= */ true);
+```
+
+## Quick Start — other databases (bring your own driver)
 
 ```typescript
 import 'reflect-metadata';
@@ -180,18 +246,34 @@ const definition = Schema.define(User);
 console.log(definition.columns);
 ```
 
-## Custom Database Driver
+## Custom Database Driver (bring your own executor)
+
+`Connection.execute()` dispatches every SQL statement through a single
+`ExecuteFn` callback. If you're not using the built-in SQLite adapter, you must
+register your own executor before calling any model methods.
 
 ```typescript
 import { Connection } from 'node-orm';
+import { Pool } from 'pg';
 
-// Register your database driver
-Connection.setExecutor(async (sql, params) => {
-  // Use pg, mysql2, better-sqlite3, etc.
-  const result = await yourDbClient.query(sql, params);
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+
+await Connection.connect({ dialect: 'postgres', database: 'myapp' });
+
+// Wire up the pg driver.  The function receives the SQL string and a
+// positional-parameter array; it must return Promise<unknown[]>.
+Connection.setExecutor(async (sql, params = []) => {
+  const result = await pool.query(sql, params);
   return result.rows;
 });
+
+// All Model and QueryBuilder calls now go through the pg pool.
+const users = await User.findAll({ limit: 10 });
 ```
+
+The same pattern works with `mysql2`, `@planetscale/database`, `libsql`, or any
+other SQL client — you just wrap its query method in the `ExecuteFn` signature
+`(sql: string, params?: unknown[]) => Promise<unknown[]>`.
 
 ## Transactions
 
